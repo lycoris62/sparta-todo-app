@@ -1,0 +1,21 @@
+# 환경변수 설정 방법
+# 1. 인텔리제이 기준, 우상단 실행 옆 TodoappApplication 좌클릭 -> 구성 편집 클릭
+# 2. 빌드 및 실행 탭의 오른쪽 끝에 옵션 수정 클릭
+# 3. 운영 체제 -> 환경 변수 클릭
+# 4. 새로 생긴 환경 변수 입력란에 다음과 같이 입력 ( {...}는 {와 }를 지우고 ...는 각 로컬 환경에 맞게 수정 )
+# DB_DATABASE_NAME={spartatodoapp};DB_PASSWORD={비밀번호};DB_PORT=3306;DB_USERNAME=root;
+
+spring:
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:${DB_PORT}/${DB_DATABASE_NAME}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
