@@ -1,5 +1,9 @@
 package sparta.todoapp.domain.auth.service;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import sparta.todoapp.domain.auth.dto.AuthRequestDto;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.repository.UserRepository;
+import sparta.todoapp.global.config.security.CustomUserDetails;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 
 /**
@@ -54,14 +59,27 @@ public class AuthService {
 		User user = userRepository.findByUsername(requestDto.getUsername())
 			.orElseThrow(() -> new IllegalArgumentException("없는 유저네임"));
 
-		validatePassword(requestDto.getPassword(), user.getPassword()); // 맞는 비밀번호인지 검증
+		Authentication authentication = getAuthentication(requestDto.getPassword(), user);
+		setAuthentication(authentication);
 
 		return jwtUtil.createToken(user.getUsername(), user.getRole()); // 토큰 생성
+	}
+
+	private Authentication getAuthentication(String rawPassword, User user) {
+		validatePassword(rawPassword, user.getPassword()); // 맞는 비밀번호인지 검증
+
+		CustomUserDetails userDetails = new CustomUserDetails(user);
+		return new UsernamePasswordAuthenticationToken(userDetails, user.getPassword(), userDetails.getAuthorities());
 	}
 
 	private void validatePassword(String rawPassword, String encodedPassword) {
 		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
 			throw new IllegalArgumentException("잘못된 비밀번호");
 		}
+	}
+
+	private void setAuthentication(Authentication authentication) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		context.setAuthentication(authentication);
 	}
 }
