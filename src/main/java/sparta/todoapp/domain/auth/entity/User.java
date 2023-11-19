@@ -2,6 +2,8 @@ package sparta.todoapp.domain.auth.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,4 +28,8 @@ public class User extends BaseEntity {
 
 	@Column(nullable = false, length = 60) // 평문은 8자 이상, 15자 이하이지만, BCrypt 암호화 시 60자로 늘어남
 	private String password;
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING) // ORDINAL 로 하면 정수로 저장이 되므로 이후 Role 추가 시 문제 생길 여지 있음
+	private UserRoleEnum role;
 }
