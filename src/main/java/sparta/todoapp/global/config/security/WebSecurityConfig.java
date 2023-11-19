@@ -6,9 +6,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import lombok.RequiredArgsConstructor;
+import sparta.todoapp.global.config.security.jwt.JwtFilter;
+import sparta.todoapp.global.config.security.jwt.JwtUtil;
 
 /**
  * 스프링 시큐리티 6버전
@@ -16,7 +22,11 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
+
+	private final JwtUtil jwtUtil;
+	private final UserDetailsService userDetailsService;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -32,6 +42,8 @@ public class WebSecurityConfig {
 			.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 정적 자원은 허용
 			.requestMatchers("/api/auth/**").permitAll() // 로그인 및 회원가입은 허용
 			.anyRequest().authenticated()); // 나머지 엔드포인트는 검증
+
+		http.addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
