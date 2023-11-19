@@ -37,10 +37,14 @@ public class AuthService {
 		String username = requestDto.getUsername();
 		String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
 
-		checkExistingUsername(username); // 이미 유저네임이 있는지 검증
-		User createdUser = User.createUser(username, encodedPassword); // 유저 생성
-		
+		User createdUser = createUser(username, encodedPassword);
+
 		userRepository.save(createdUser);
+	}
+
+	private User createUser(String username, String encodedPassword) {
+		checkExistingUsername(username); // 이미 유저네임이 있는지 검증
+		return User.createUser(username, encodedPassword);
 	}
 
 	private void checkExistingUsername(String username) {
