@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Getter;
@@ -31,9 +30,8 @@ public class CustomUserDetails implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		UserRoleEnum role = user.getRole();
-		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.getAuthority());
 
-		return List.of(authority);
+		return List.of(role::getAuthority);
 	}
 
 	@Override
