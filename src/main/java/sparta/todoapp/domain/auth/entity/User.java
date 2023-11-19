@@ -13,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sparta.todoapp.domain.model.BaseEntity;
 
+/**
+ * 사용자 엔티티.
+ */
 @Getter
 @Entity
 @Table(name = "users") // MySQL 에서 USER 는 예약어이므로 s를 붙임
@@ -32,4 +35,14 @@ public class User extends BaseEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING) // ORDINAL 로 하면 정수로 저장이 되므로 이후 Role 추가 시 문제 생길 여지 있음
 	private UserRoleEnum role;
+
+	private User(String username, String password, UserRoleEnum role) {
+		this.username = username;
+		this.password = password;
+		this.role = role;
+	}
+
+	public static User createUser(String username, String password) {
+		return new User(username, password, UserRoleEnum.USER);
+	}
 }
