@@ -23,11 +23,11 @@ import lombok.Getter;
 public abstract class BaseEntity {
 
 	@CreatedDate
-	@Column(updatable = false)
+	@Column
 	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime createdAt; // 생성일자
+	protected LocalDateTime createdAt; // 생성일자
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
-	private LocalDateTime updatedAt; // 수정일자
+	protected LocalDateTime updatedAt; // 수정일자
 }
