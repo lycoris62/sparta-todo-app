@@ -14,7 +14,8 @@ import sparta.todoapp.global.config.security.jwt.JwtUtil;
 
 /**
  * 로그인과 회원가입과 같은 인증을 담당하는 컨트롤러.
- * 필터에서
+ * 필터에서는 shouldNotFilter 메서드에서 화이트리스트로 통과되도록 하여
+ * 이 컨트롤러에서 로그인 및 회원가입 처리를 할 수 있도록 함.
  */
 @RestController
 @RequiredArgsConstructor
