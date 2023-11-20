@@ -17,14 +17,22 @@ import sparta.todoapp.domain.comment.dto.response.CommentResponseDto;
 import sparta.todoapp.domain.comment.service.CommentService;
 import sparta.todoapp.global.config.security.CustomUserDetails;
 
+/**
+ * 댓글 컨트롤러
+ */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/todocards/{todoCardId}/comment")
+@RequestMapping("/api/comment")
 public class CommentController {
 
 	private final CommentService commentService;
 
-	@PostMapping
+	/**
+	 * 댓글 작성.
+	 *
+	 * @param todoCardId 어느 할일카드에 달린 댓글인지 체크
+	 */
+	@PostMapping("todocards/{todoCardId}")
 	public ResponseEntity<CommentResponseDto> createComment(
 		@PathVariable Long todoCardId,
 		@RequestBody CommentCreateRequestDto requestDto,
@@ -35,6 +43,9 @@ public class CommentController {
 		return ResponseEntity.ok(responseDto);
 	}
 
+	/**
+	 * 댓글 수정.
+	 */
 	@PatchMapping("/{commentId}")
 	public ResponseEntity<CommentResponseDto> editComment(
 		@PathVariable Long commentId,
@@ -46,6 +57,9 @@ public class CommentController {
 		return ResponseEntity.ok(responseDto);
 	}
 
+	/**
+	 * 댓글 삭제.
+	 */
 	@DeleteMapping("/{commentId}")
 	public ResponseEntity<?> deleteComment(
 		@PathVariable Long commentId,
