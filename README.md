@@ -5,7 +5,7 @@
 > [참고할 점]    
 > * JWT 필터가 1개 입니다. 강의와 달리 로그인 및 회원가입은 AuthController가 하고 있습니다. 필터에서는 shouldNotFilter 메서드를 이용하여 통과시켰습니다.
 > * 디렉토리는 크게 `domain`과 `global`로 나뉩니다.
-> * `domain` 에서는 `인증(auth)`, `할일카드(todocard)`, `댓글(commant)` 도메인으로 나뉘고, 그 안에서 컨트롤로, 서비스, 레포지토리 등 나뉩니다.
+> * `domain` 에서는 `인증(auth)`, `할일카드(todocard)`, `댓글(comment)` 도메인으로 나뉘고, 그 안에서 컨트롤로, 서비스, 레포지토리 등 나뉩니다.
 > * `global` 에서는 전반적으로 쓰이는 `security`나 `error` 처리를 맡고 있습니다. 
 > * 선택 요구사항이나, 저번 리뷰때 알려주셨던 mapStruct는 공부하고 적용할 시간이 없었습니다..
 > * ERD나 API 명세서 역시 작성할 시간이 없었습니다..
@@ -88,7 +88,7 @@
             ├── InvalidTokenException.java
             └── UserNotFoundException.java
 ```
-
+위 디렉토리 구조는 [스프링 입문 과제 - 익명게시판](https://github.com/lycoris62/sparta-anonymous-board) 레포의 리드미에 개략적으로 설명되어 있습니다. 
 
 ## API 명세 
 ![스크린샷 2023-11-20 오후 7 47 52](https://github.com/lycoris62/sparta-todo-app/assets/55584664/06b4b56d-c060-4aab-994c-1d8f5253a6fc)
