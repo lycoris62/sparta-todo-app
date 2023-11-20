@@ -14,6 +14,8 @@ import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.global.config.security.CustomUserDetails;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
+import sparta.todoapp.global.error.exception.DuplicateUsernameException;
+import sparta.todoapp.global.error.exception.UserNotFoundException;
 
 /**
  * 로그인과 회원가입과 같이 인증을 담당하는 서비스
@@ -49,7 +51,7 @@ public class AuthService {
 
 	private void checkExistingUsername(String username) {
 		if (userRepository.existsByUsername(username)) {
-			throw new IllegalArgumentException("이미 있는 유저네임");
+			throw new DuplicateUsernameException();
 		}
 	}
 
@@ -61,7 +63,7 @@ public class AuthService {
 	public String login(AuthRequestDto requestDto) {
 
 		User user = userRepository.findByUsername(requestDto.getUsername())
-			.orElseThrow(() -> new IllegalArgumentException("없는 유저네임"));
+			.orElseThrow(UserNotFoundException::new);
 
 		Authentication authentication = getAuthentication(requestDto.getPassword(), user);
 		setAuthentication(authentication);
@@ -78,7 +80,7 @@ public class AuthService {
 
 	private void validatePassword(String rawPassword, String encodedPassword) {
 		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-			throw new IllegalArgumentException("잘못된 비밀번호");
+			throw new UserNotFoundException();
 		}
 	}
 
