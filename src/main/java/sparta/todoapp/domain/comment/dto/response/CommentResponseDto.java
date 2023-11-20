@@ -3,6 +3,9 @@ package sparta.todoapp.domain.comment.dto.response;
 import lombok.Getter;
 import sparta.todoapp.domain.comment.entity.Comment;
 
+/**
+ * 댓글 응답 DTO
+ */
 @Getter
 public class CommentResponseDto {
 

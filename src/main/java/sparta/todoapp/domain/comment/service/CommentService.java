@@ -15,6 +15,9 @@ import sparta.todoapp.domain.comment.repository.CommentRepository;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
 
+/**
+ * 댓글 관련 서비스.
+ */
 @Slf4j
 @Service
 @Transactional
@@ -24,6 +27,9 @@ public class CommentService {
 	private final CommentRepository commentRepository;
 	private final TodoCardRepository todoCardRepository;
 
+	/**
+	 * 댓글 작성.
+	 */
 	public CommentResponseDto createComment(Long todoCardId, CommentCreateRequestDto requestDto, User user) {
 
 		TodoCard todoCard = todoCardRepository.findById(todoCardId)
@@ -35,6 +41,9 @@ public class CommentService {
 		return new CommentResponseDto(comment);
 	}
 
+	/**
+	 * 댓글 수정.
+	 */
 	public CommentResponseDto editComment(Long commentId, CommentEditRequestDto requestDto, User user) {
 
 		Comment comment = getRealUserComment(commentId, user);
@@ -43,12 +52,18 @@ public class CommentService {
 		return new CommentResponseDto(comment);
 	}
 
+	/**
+	 * 댓글 삭제.
+	 */
 	public void deleteComment(Long commentId, User user) {
 
 		Comment comment = getRealUserComment(commentId, user);
 		commentRepository.delete(comment);
 	}
 
+	/**
+	 * 작성자의 댓글만 가져옴
+	 */
 	private Comment getRealUserComment(Long commentId, User user) {
 
 		Comment comment = commentRepository.findById(commentId)
