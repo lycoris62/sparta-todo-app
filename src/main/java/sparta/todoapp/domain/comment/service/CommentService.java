@@ -1,6 +1,5 @@
 package sparta.todoapp.domain.comment.service;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +13,7 @@ import sparta.todoapp.domain.comment.entity.Comment;
 import sparta.todoapp.domain.comment.repository.CommentRepository;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
+import sparta.todoapp.global.error.exception.AccessDeniedException;
 
 /**
  * 댓글 관련 서비스.
@@ -76,7 +76,7 @@ public class CommentService {
 
 	private void accessCheck(User user, Comment comment) {
 		if (!user.equals(comment.getAuthor())) {
-			throw new AccessDeniedException("다른 사용자의 댓글 접근");
+			throw new AccessDeniedException();
 		}
 	}
 }
