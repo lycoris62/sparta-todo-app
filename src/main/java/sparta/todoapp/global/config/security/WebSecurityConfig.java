@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,6 +48,10 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 		http.csrf(AbstractHttpConfigurer::disable); // CSRF 는 쿠키 기반 공격이므로 불필요
+
+		// 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
+		http.sessionManagement((sessionManagement) ->
+			sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 		http.authorizeHttpRequests((authz) -> authz
 			.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 정적 자원은 허용
