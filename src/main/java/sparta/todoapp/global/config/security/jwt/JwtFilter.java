@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import sparta.todoapp.global.error.exception.InvalidTokenException;
 
 /**
  * 헤더에서 JWT 가져와서 인증 객체 생성
@@ -47,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		if (!jwtUtil.isTokenValid(tokenValue)) { // 유효성 검증
 			log.error("토큰 에러");
-			return;
+			throw new InvalidTokenException();
 		}
 
 		Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
