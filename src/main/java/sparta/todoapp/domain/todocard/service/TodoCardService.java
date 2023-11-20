@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.*;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +17,7 @@ import sparta.todoapp.domain.todocard.dto.response.TodoCardDetailResponseDto;
 import sparta.todoapp.domain.todocard.dto.response.TodoCardSimpleResponseDto;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
+import sparta.todoapp.global.error.exception.AccessDeniedException;
 
 /**
  * 할일카드 관련 서비스
@@ -108,7 +108,7 @@ public class TodoCardService {
 		if (!author.equals(username)) {
 			log.error("user : {}", username);
 			log.error("todo author : {}", author);
-			throw new AccessDeniedException("자신의 할일카드가 아닙니다.");
+			throw new AccessDeniedException();
 		}
 	}
 }
