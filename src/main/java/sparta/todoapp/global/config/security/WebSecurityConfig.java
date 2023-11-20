@@ -34,6 +34,16 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
+	public JwtFilter jwtFilter() {
+		return new JwtFilter(jwtUtil, userDetailsService);
+	}
+
+	@Bean
+	public ExceptionHandleFilter exceptionHandleFilter() {
+		return new ExceptionHandleFilter();
+	}
+
+	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 		http.csrf(AbstractHttpConfigurer::disable); // CSRF 는 쿠키 기반 공격이므로 불필요
@@ -43,7 +53,8 @@ public class WebSecurityConfig {
 			.requestMatchers("/api/auth/**").permitAll() // 로그인 및 회원가입은 허용
 			.anyRequest().authenticated()); // 나머지 엔드포인트는 검증
 
-		http.addFilterBefore(new JwtFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(exceptionHandleFilter(), JwtFilter.class);
 
 		return http.build();
 	}
