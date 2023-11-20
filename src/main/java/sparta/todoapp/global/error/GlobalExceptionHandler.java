@@ -4,6 +4,7 @@ import static sparta.todoapp.global.error.ErrorCode.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -52,5 +53,15 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleAccessDeniedException(IllegalArgumentException e) {
 		ErrorResponse response = new ErrorResponse(e.getMessage());
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+	}
+
+	/**
+	 * Validation 라이브러리 종속 예외.
+	 * 입력 길이 미충족 시 발생
+	 */
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	protected ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+		ErrorResponse response = new ErrorResponse(INVALID_INPUT_LENGTH.getMessage());
+		return new ResponseEntity<>(response, INVALID_INPUT_LENGTH.getHttpStatus());
 	}
 }
