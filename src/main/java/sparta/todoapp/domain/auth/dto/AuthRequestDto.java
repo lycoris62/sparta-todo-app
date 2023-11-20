@@ -1,8 +1,6 @@
 package sparta.todoapp.domain.auth.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,13 +11,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthRequestDto {
 
-	@NotBlank // 빈 값이거나 공백이 아님
-	@Size(min = 4, max = 10) // 길이 4이상 10이하
-	@Pattern(regexp = "[a-z0-9]+") // a ~ z, 0 ~ 9 만 포함, 1개 이상
+	@Pattern(regexp = "^[a-z0-9]{4,10}$") // a ~ z, 0 ~ 9 만 포함, 4이상 10이하
 	private final String username;
 
-	@NotBlank // 빈 값이거나 공백이 아님
-	@Size(min = 8, max = 15) // 길이 8이상 15이하
-	@Pattern(regexp = "[a-zA-Z0-9]+") // a~z, A~Z, 0~9 만 포함, 1개 이상
+	@Pattern(regexp = "^[a-zA-Z0-9]{8,15}$") // a~z, A~Z, 0~9 만 포함, 8이상 15이하
 	private final String password;
 }
