@@ -27,7 +27,7 @@ public class TodoCardService {
 
 	private final TodoCardRepository todoCardRepository;
 
-	public Map<String, List<TodoCardSimpleResponseDto>> getTodoCards() {
+	public Map<String, List<TodoCardSimpleResponseDto>> getTodoCardsByUsername() {
 
 		return todoCardRepository.findAllByOrderByCreatedAtDesc() // 내림차순으로 할일카드 전부 가져오기
 			.stream()

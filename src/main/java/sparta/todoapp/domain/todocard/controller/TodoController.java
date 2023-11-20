@@ -33,7 +33,7 @@ public class TodoController {
 	@GetMapping("")
 	public ResponseEntity<Map<String, List<TodoCardSimpleResponseDto>>> getTodoCards() {
 
-		Map<String, List<TodoCardSimpleResponseDto>> userTodosMap = todoCardService.getTodoCards();
+		Map<String, List<TodoCardSimpleResponseDto>> userTodosMap = todoCardService.getTodoCardsByUsername();
 
 		return ResponseEntity.ok(userTodosMap);
 	}
