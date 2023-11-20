@@ -19,6 +19,9 @@ import sparta.todoapp.domain.todocard.dto.response.TodoCardSimpleResponseDto;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
 
+/**
+ * 할일카드 관련 서비스
+ */
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -27,6 +30,9 @@ public class TodoCardService {
 
 	private final TodoCardRepository todoCardRepository;
 
+	/**
+	 * 모든 할일카드 리스트를 사용자에 따라 분류하여 반환
+	 */
 	public Map<String, List<TodoCardSimpleResponseDto>> getTodoCardsByUsername() {
 
 		return todoCardRepository.findAllByOrderByCreatedAtDesc() // 내림차순으로 할일카드 전부 가져오기
@@ -35,6 +41,9 @@ public class TodoCardService {
 			.collect(groupingBy(TodoCardSimpleResponseDto::getUsername)); // 사용자 기준으로 분류
 	}
 
+	/**
+	 * 할일카드 단건 조회
+	 */
 	public TodoCardDetailResponseDto getTodoCard(Long todoCardId) {
 
 		TodoCard todoCard = getTodoCardById(todoCardId);
@@ -42,6 +51,9 @@ public class TodoCardService {
 		return new TodoCardDetailResponseDto(todoCard);
 	}
 
+	/**
+	 * 할일카드 생성
+	 */
 	@Transactional
 	public TodoCardDetailResponseDto createTodoCard(TodoCardCreateRequestDto requestDto, User user) {
 
@@ -57,26 +69,26 @@ public class TodoCardService {
 		return new TodoCardDetailResponseDto(savedTodoCard);
 	}
 
+	/**
+	 * 할일카드 수정
+	 */
 	@Transactional
 	public TodoCardDetailResponseDto editTodoCard(Long todoCardId, TodoCardEditRequestDto requestDto, String username) {
 
-		TodoCard todoCard = getValidTodoCard(todoCardId, username);
+		TodoCard todoCard = getValidTodoCard(todoCardId, username); // 사용자가 작성한 할일카드만 가져옴
 		todoCard.update(requestDto);
 
 		return new TodoCardDetailResponseDto(todoCard);
 	}
 
+	/**
+	 * 할일카드 완료
+	 */
 	@Transactional
 	public void finishTodoCard(Long todoCardId, String username) {
 
-		TodoCard todoCard = getValidTodoCard(todoCardId, username);
+		TodoCard todoCard = getValidTodoCard(todoCardId, username); // 사용자가 작성한 할일카드만 가져옴
 		todoCard.finish();
-	}
-
-	private TodoCard getTodoCardById(Long todoCardId) {
-
-		return todoCardRepository.findById(todoCardId)
-			.orElseThrow(() -> new IllegalArgumentException("잘못된 아이디"));
 	}
 
 	private TodoCard getValidTodoCard(Long todoCardId, String username) {
@@ -85,6 +97,11 @@ public class TodoCardService {
 		validateRealUser(username, todoCard.getAuthor().getUsername());
 
 		return todoCard;
+	}
+
+	private TodoCard getTodoCardById(Long todoCardId) {
+		return todoCardRepository.findById(todoCardId)
+			.orElseThrow(() -> new IllegalArgumentException("잘못된 아이디"));
 	}
 
 	private void validateRealUser(String username, String author) {

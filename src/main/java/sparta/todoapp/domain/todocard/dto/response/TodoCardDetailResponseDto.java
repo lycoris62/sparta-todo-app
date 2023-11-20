@@ -7,6 +7,10 @@ import lombok.Getter;
 import sparta.todoapp.domain.comment.dto.response.CommentResponseDto;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 
+/**
+ * 할일카드 세부 정보 응답 DTO
+ * 할일카드 내의 댓글 리스트도 DTO 반환하여 반환.
+ */
 @Getter
 public class TodoCardDetailResponseDto {
 

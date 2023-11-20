@@ -23,10 +23,13 @@ import sparta.todoapp.domain.comment.entity.Comment;
 import sparta.todoapp.domain.model.BaseEntity;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardEditRequestDto;
 
+/**
+ * 할일카드 엔티티
+ */
 @Getter
 @Entity
-@Table(name = "todocard")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "todocard") // 테이블명 명시
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA 엔티티의 최소 접근제어자로 설정
 public class TodoCard extends BaseEntity {
 
 	@Id
@@ -56,16 +59,22 @@ public class TodoCard extends BaseEntity {
 		this.author = author;
 		this.isDone = false;
 
-		if (createdAt != null) {
+		if (createdAt != null) { // 생성일자를 입력하면 그 생성일자로 저장
 			this.createdAt = createdAt;
 		}
 	}
 
+	/**
+	 * 할일카드 수정
+	 */
 	public void update(TodoCardEditRequestDto requestDto) {
 		this.title = requestDto.getTitle();
 		this.content = requestDto.getContent();
 	}
 
+	/**
+	 * 할일카드 완료
+	 */
 	public void finish() {
 		this.isDone = true;
 	}

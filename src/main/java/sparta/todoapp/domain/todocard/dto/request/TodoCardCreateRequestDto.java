@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 import lombok.Getter;
 
+/**
+ * 할일카드 생성 요청 DTO
+ */
 @Getter
 public class TodoCardCreateRequestDto {
 

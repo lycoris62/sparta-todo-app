@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 
+/**
+ * 할일카드 단순 조회 응답 DTO
+ */
 @Getter
 public class TodoCardSimpleResponseDto {
 
