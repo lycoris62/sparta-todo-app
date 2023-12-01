@@ -36,7 +36,11 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-    implementation 'org.springframework.boot:spring-boot-starter-validation' // 검증
+    // 검증
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // H2 DB
+    runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('bootBuildImage') {
