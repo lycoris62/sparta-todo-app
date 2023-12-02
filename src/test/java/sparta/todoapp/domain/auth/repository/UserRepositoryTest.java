@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import sparta.todoapp.domain.auth.entity.User;
 
+@DisplayName("인증 레포지토리 테스트")
 @DataJpaTest
 class UserRepositoryTest {
 
