@@ -35,6 +35,7 @@ import sparta.todoapp.global.config.security.CustomUserDetails;
 import sparta.todoapp.global.config.security.WebSecurityConfig;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 
+@DisplayName("인증 컨트롤러 테스트")
 @MockBean(JpaMetamodelMappingContext.class)
 @WebMvcTest(
 	controllers = {AuthController.class},
