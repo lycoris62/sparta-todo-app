@@ -2,6 +2,7 @@ package sparta.todoapp.global.config.security;
 
 import java.io.IOException;
 
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -31,4 +32,6 @@ public class MockSpringSecurityFilter implements Filter {
 	public void destroy() {
 		SecurityContextHolder.clearContext();
 	}
+
+	public void getFilters(MockHttpServletRequest mockHttpServletRequest){}
 }
