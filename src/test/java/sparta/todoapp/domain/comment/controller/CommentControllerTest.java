@@ -207,4 +207,21 @@ class CommentControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.message").value("잘못된 댓글 아이디"));
 	}
+
+	@DisplayName("댓글 삭제 요청 성공")
+	@Test
+	void delete_comment_success() throws Exception {
+		// given
+		Long commentId = 1L;
+
+		// when
+		ResultActions resultActions = mvc.perform(delete("/api/comments/{commentId}", commentId)
+			.contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+			.accept(MediaType.APPLICATION_JSON)
+			.principal(mockPrincipal));
+
+		// then
+		resultActions
+			.andExpect(status().isOk());
+	}
 }
