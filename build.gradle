@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.1.5'
     id 'io.spring.dependency-management' version '1.1.3'
+    id 'jacoco'
 }
 
 group = 'sparta'
@@ -36,7 +37,11 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-    implementation 'org.springframework.boot:spring-boot-starter-validation' // 검증
+    // 검증
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // H2 DB
+    runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('bootBuildImage') {
@@ -45,4 +50,30 @@ tasks.named('bootBuildImage') {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+        html.required = true
+
+        // 리포트의 저장 경로를 설정합니다.
+        html.destination file("jacoco/jacocoHtml")
+        xml.destination file("jacoco/jacoco.xml")
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules { // 커버리지의 범위와 퍼센테이지를 설정합니다.
+        rule {
+            element = 'CLASS'
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+        }
+    }
 }

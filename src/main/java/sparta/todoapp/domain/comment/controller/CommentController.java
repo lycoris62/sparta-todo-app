@@ -32,7 +32,7 @@ public class CommentController {
 	 *
 	 * @param todoCardId 어느 할일카드에 달린 댓글인지 체크
 	 */
-	@PostMapping("todocards/{todoCardId}")
+	@PostMapping("/todocards/{todoCardId}")
 	public ResponseEntity<CommentResponseDto> createComment(
 		@PathVariable Long todoCardId,
 		@RequestBody CommentCreateRequestDto requestDto,
