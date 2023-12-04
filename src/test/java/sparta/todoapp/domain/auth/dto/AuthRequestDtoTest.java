@@ -7,12 +7,14 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
+@ActiveProfiles("test")
 @DisplayName("로그인 및 회원가입 요청 DTO 테스트")
 class AuthRequestDtoTest {
 

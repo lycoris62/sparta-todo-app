@@ -27,6 +27,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -48,6 +49,7 @@ import sparta.todoapp.global.config.security.CustomUserDetails;
 import sparta.todoapp.global.config.security.MockSpringSecurityFilter;
 import sparta.todoapp.global.config.security.WebSecurityConfig;
 
+@ActiveProfiles("test")
 @DisplayName("할일카드 컨트롤러 테스트")
 @MockBean(JpaMetamodelMappingContext.class)
 @WebMvcTest(

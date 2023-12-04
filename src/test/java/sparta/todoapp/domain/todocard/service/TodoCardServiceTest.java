@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
 
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardCreateRequestDto;
@@ -25,6 +26,7 @@ import sparta.todoapp.domain.todocard.entity.TodoCard;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
 import sparta.todoapp.global.error.exception.AccessDeniedException;
 
+@ActiveProfiles("test")
 @DisplayName("할일카드의 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
 class TodoCardServiceTest {

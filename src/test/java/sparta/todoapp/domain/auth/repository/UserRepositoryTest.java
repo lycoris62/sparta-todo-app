@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import sparta.todoapp.domain.auth.entity.User;
 
+@ActiveProfiles("test")
 @DisplayName("인증 레포지토리 테스트")
 @DataJpaTest
 class UserRepositoryTest {

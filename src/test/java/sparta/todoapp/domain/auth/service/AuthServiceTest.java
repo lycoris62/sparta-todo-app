@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import sparta.todoapp.domain.auth.dto.AuthRequestDto;
 import sparta.todoapp.domain.auth.entity.User;
@@ -21,6 +22,7 @@ import sparta.todoapp.global.config.security.jwt.JwtUtil;
 import sparta.todoapp.global.error.exception.DuplicateUsernameException;
 import sparta.todoapp.global.error.exception.UserNotFoundException;
 
+@ActiveProfiles("test")
 @DisplayName("로그인 및 회원가입 요청 서비스 테스트")
 @ExtendWith(MockitoExtension.class) // @Mock 사용을 위해 설정합니다.
 class AuthServiceTest {

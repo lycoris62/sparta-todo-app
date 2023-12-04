@@ -18,6 +18,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,6 +34,7 @@ import sparta.todoapp.global.config.security.WebSecurityConfig;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 import sparta.todoapp.global.error.exception.DuplicateUsernameException;
 
+@ActiveProfiles("test")
 @DisplayName("인증 컨트롤러 테스트")
 @MockBean(JpaMetamodelMappingContext.class)
 @WebMvcTest(
