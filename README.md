@@ -16,6 +16,11 @@
 ![스크린샷 2023-12-04 오전 11 35 42](https://github.com/lycoris62/sparta-todo-app/assets/55584664/c054e7a1-b908-4aaa-89c5-bb2247e595ea)
 
 
+### 해설 강의 수강 후 개선
+![스크린샷 2023-12-04 오후 6 05 57](https://github.com/lycoris62/sparta-todo-app/assets/55584664/a006b68d-4db6-45b7-aebe-7ddf677d6157)
+
+80% 까지 달성
+
 ## 숙련 주차 README 
 
 > 개인적인 일이 있어 과제를 늦게 시작해 제대로 완료하지 못했습니다.
