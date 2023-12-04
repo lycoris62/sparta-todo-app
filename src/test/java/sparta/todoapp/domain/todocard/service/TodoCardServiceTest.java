@@ -218,7 +218,7 @@ class TodoCardServiceTest {
 
 	@DisplayName("할일카드 수정/완료 실패 - 다른 유저네임")
 	@Test
-	void edit_todocard_fail_not_smae_username() {
+	void edit_todocard_fail_not_same_username() {
 		// given
 		String username = "jaeyun";
 		String password = "12345678";
