@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import sparta.todoapp.global.error.exception.AccessDeniedException;
 import sparta.todoapp.global.error.exception.DuplicateUsernameException;
+import sparta.todoapp.global.error.exception.ServiceException;
 import sparta.todoapp.global.error.exception.UserNotFoundException;
 
 /**
@@ -18,6 +19,16 @@ import sparta.todoapp.global.error.exception.UserNotFoundException;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+	/**
+	 * 모든 예외를 ServiceException 으로 통일, 에러 내의 ErrorCode 로 핸들링
+	 */
+	@ExceptionHandler(ServiceException.class)
+	protected ResponseEntity<ErrorResponse> handleServiceException(ServiceException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		ErrorResponse response = new ErrorResponse(errorCode.getMessage());
+		return new ResponseEntity<>(response, errorCode.getHttpStatus());
+	}
 
 	/**
 	 * 잘못된 username, password 로 사용자를 찾을 수 없는 경우.
