@@ -1,5 +1,6 @@
 package sparta.todoapp.domain.auth.service;
 
+import static sparta.todoapp.global.error.ErrorCode.DUPLICATE_USERNAME;
 import static sparta.todoapp.global.error.ErrorCode.PASSWORD_MISMATCH;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.global.config.security.CustomUserDetails;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
-import sparta.todoapp.global.error.exception.DuplicateUsernameException;
 import sparta.todoapp.global.error.exception.ServiceException;
 import sparta.todoapp.global.error.exception.UserNotFoundException;
 
@@ -62,7 +62,7 @@ public class AuthService {
 
 	private void checkExistingUsername(String username) {
 		if (userRepository.existsByUsername(username)) {
-			throw new DuplicateUsernameException();
+			throw new ServiceException(DUPLICATE_USERNAME);
 		}
 	}
 

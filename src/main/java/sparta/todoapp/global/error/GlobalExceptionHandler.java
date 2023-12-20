@@ -1,6 +1,5 @@
 package sparta.todoapp.global.error;
 
-import static sparta.todoapp.global.error.ErrorCode.DUPLICATE_USERNAME;
 import static sparta.todoapp.global.error.ErrorCode.INVALID_INPUT_LENGTH;
 import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import sparta.todoapp.global.error.exception.DuplicateUsernameException;
 import sparta.todoapp.global.error.exception.ServiceException;
 import sparta.todoapp.global.error.exception.UserNotFoundException;
 
@@ -37,15 +35,6 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException e) {
 		ErrorResponse response = new ErrorResponse(USER_NOT_FOUND.getMessage());
 		return new ResponseEntity<>(response, USER_NOT_FOUND.getHttpStatus());
-	}
-
-	/**
-	 * 회원가입 시 중복된 username 이 있는 경우.
-	 */
-	@ExceptionHandler(DuplicateUsernameException.class)
-	protected ResponseEntity<ErrorResponse> handleDuplicateUsernameException(DuplicateUsernameException e) {
-		ErrorResponse response = new ErrorResponse(DUPLICATE_USERNAME.getMessage());
-		return new ResponseEntity<>(response, DUPLICATE_USERNAME.getHttpStatus());
 	}
 
 	/**
