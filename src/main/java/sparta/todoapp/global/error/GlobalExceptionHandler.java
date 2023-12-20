@@ -1,7 +1,6 @@
 package sparta.todoapp.global.error;
 
 import static sparta.todoapp.global.error.ErrorCode.INVALID_INPUT_LENGTH;
-import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sparta.todoapp.global.error.exception.ServiceException;
-import sparta.todoapp.global.error.exception.UserNotFoundException;
 
 /**
  * 에러 핸들링 컨트롤러.
@@ -26,15 +24,6 @@ public class GlobalExceptionHandler {
 		ErrorCode errorCode = e.getErrorCode();
 		ErrorResponse response = new ErrorResponse(errorCode.getMessage());
 		return new ResponseEntity<>(response, errorCode.getHttpStatus());
-	}
-
-	/**
-	 * 잘못된 username, password 로 사용자를 찾을 수 없는 경우.
-	 */
-	@ExceptionHandler(UserNotFoundException.class)
-	protected ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException e) {
-		ErrorResponse response = new ErrorResponse(USER_NOT_FOUND.getMessage());
-		return new ResponseEntity<>(response, USER_NOT_FOUND.getHttpStatus());
 	}
 
 	/**
