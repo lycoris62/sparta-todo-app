@@ -1,15 +1,14 @@
 package sparta.todoapp.domain.todocard.service;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static sparta.todoapp.global.error.ErrorCode.ACCESS_DENIED;
 
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardCreateRequestDto;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardEditRequestDto;
@@ -17,7 +16,7 @@ import sparta.todoapp.domain.todocard.dto.response.TodoCardDetailResponseDto;
 import sparta.todoapp.domain.todocard.dto.response.TodoCardSimpleResponseDto;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
-import sparta.todoapp.global.error.exception.AccessDeniedException;
+import sparta.todoapp.global.error.exception.ServiceException;
 
 /**
  * 할일카드 관련 서비스
@@ -106,9 +105,7 @@ public class TodoCardService {
 
 	private void validateRealUser(String username, String author) {
 		if (!author.equals(username)) {
-			log.error("user : {}", username);
-			log.error("todo author : {}", author);
-			throw new AccessDeniedException();
+			throw new ServiceException(ACCESS_DENIED);
 		}
 	}
 }

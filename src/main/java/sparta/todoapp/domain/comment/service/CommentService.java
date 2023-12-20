@@ -1,10 +1,11 @@
 package sparta.todoapp.domain.comment.service;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static sparta.todoapp.global.error.ErrorCode.ACCESS_DENIED;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.comment.dto.request.CommentCreateRequestDto;
 import sparta.todoapp.domain.comment.dto.request.CommentEditRequestDto;
@@ -13,7 +14,7 @@ import sparta.todoapp.domain.comment.entity.Comment;
 import sparta.todoapp.domain.comment.repository.CommentRepository;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
-import sparta.todoapp.global.error.exception.AccessDeniedException;
+import sparta.todoapp.global.error.exception.ServiceException;
 
 /**
  * 댓글 관련 서비스.
@@ -76,7 +77,7 @@ public class CommentService {
 
 	private void accessCheck(User user, Comment comment) {
 		if (!user.equals(comment.getAuthor())) {
-			throw new AccessDeniedException();
+			throw new ServiceException(ACCESS_DENIED);
 		}
 	}
 }
