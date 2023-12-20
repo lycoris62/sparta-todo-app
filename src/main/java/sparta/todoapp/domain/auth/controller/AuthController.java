@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
 import sparta.todoapp.domain.auth.service.AuthService;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 
@@ -29,7 +30,7 @@ public class AuthController {
 	 * @param requestDto username, password 를 가짐
 	 */
 	@PostMapping("/signup")
-	public ResponseEntity<?> signup(@Valid @RequestBody AuthRequestDto requestDto) {
+	public ResponseEntity<?> signup(@Valid @RequestBody AuthSignUpRequestDto requestDto) {
 
 		authService.signup(requestDto);
 
