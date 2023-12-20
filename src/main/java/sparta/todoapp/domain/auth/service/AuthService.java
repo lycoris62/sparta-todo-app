@@ -1,5 +1,8 @@
 package sparta.todoapp.domain.auth.service;
 
+import static sparta.todoapp.global.error.ErrorCode.PASSWORD_MISMATCH;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -7,14 +10,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
 import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.global.config.security.CustomUserDetails;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 import sparta.todoapp.global.error.exception.DuplicateUsernameException;
+import sparta.todoapp.global.error.exception.ServiceException;
 import sparta.todoapp.global.error.exception.UserNotFoundException;
 
 /**
@@ -34,7 +37,9 @@ public class AuthService {
 	 * @param requestDto username, password 를 가지는 DTO
 	 */
 	@Transactional
-	public void signup(AuthRequestDto requestDto) {
+	public void signup(AuthSignUpRequestDto requestDto) {
+
+		validateConfirmPassword(requestDto);
 
 		String username = requestDto.getUsername();
 		String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
@@ -42,6 +47,12 @@ public class AuthService {
 		User createdUser = createUser(username, encodedPassword);
 
 		userRepository.save(createdUser);
+	}
+
+	private void validateConfirmPassword(AuthSignUpRequestDto requestDto) {
+		if (!requestDto.getPassword().equals(requestDto.getConfirmPassword())) {
+			throw new ServiceException(PASSWORD_MISMATCH);
+		}
 	}
 
 	private User createUser(String username, String encodedPassword) {
