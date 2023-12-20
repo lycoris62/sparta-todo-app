@@ -1,10 +1,13 @@
 package sparta.todoapp.domain.auth.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import java.util.Optional;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,14 +16,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-
 import sparta.todoapp.domain.auth.dto.AuthRequestDto;
 import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.entity.UserRoleEnum;
 import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
-import sparta.todoapp.global.error.exception.DuplicateUsernameException;
+import sparta.todoapp.global.error.ErrorCode;
+import sparta.todoapp.global.error.exception.ServiceException;
 import sparta.todoapp.global.error.exception.UserNotFoundException;
 
 @ActiveProfiles("test")
@@ -70,7 +73,13 @@ class AuthServiceTest {
 		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(true);
 
 		// when & then
-		assertThatThrownBy(() -> authService.signup(authRequestDto)).isInstanceOf(DuplicateUsernameException.class);
+		assertThatThrownBy(() -> authService.signup(authRequestDto))
+			.isInstanceOf(ServiceException.class)
+			.satisfies(exception -> {
+				ErrorCode errorCode = ((ServiceException) exception).getErrorCode();
+				assertThat(errorCode.getMessage()).isEqualTo("중복된 username 입니다.");
+				assertThat(errorCode.getHttpStatus()).isEqualTo(BAD_REQUEST);
+			});
 	}
 
 	@DisplayName("로그인 성공")
