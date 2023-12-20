@@ -11,8 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sparta.todoapp.domain.auth.dto.AuthLoginRequestDto;
-import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthCheckUsernameRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthLoginRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthSignUpRequestDto;
+import sparta.todoapp.domain.auth.dto.response.AuthCheckUsernameResponseDto;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.global.config.security.CustomUserDetails;
@@ -90,5 +92,16 @@ public class AuthService {
 	private void setAuthentication(Authentication authentication) {
 		SecurityContext context = SecurityContextHolder.getContext();
 		context.setAuthentication(authentication);
+	}
+
+	/**
+	 * 입력받은 username이 존재하는지를 체크
+	 */
+	public AuthCheckUsernameResponseDto checkExistingUsername(
+		AuthCheckUsernameRequestDto requestDto) {
+
+		boolean hasExistingUsername = userRepository.existsByUsername(requestDto.getUsername());
+
+		return new AuthCheckUsernameResponseDto(hasExistingUsername);
 	}
 }

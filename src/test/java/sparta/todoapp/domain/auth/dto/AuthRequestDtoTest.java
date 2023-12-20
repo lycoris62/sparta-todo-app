@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
+import sparta.todoapp.domain.auth.dto.request.AuthLoginRequestDto;
 
 @ActiveProfiles("test")
 @DisplayName("로그인 및 회원가입 요청 DTO 테스트")

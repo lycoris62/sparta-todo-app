@@ -1,4 +1,4 @@
-package sparta.todoapp.domain.auth.dto;
+package sparta.todoapp.domain.auth.dto.request;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
