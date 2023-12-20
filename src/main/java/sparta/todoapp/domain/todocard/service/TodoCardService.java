@@ -45,7 +45,7 @@ public class TodoCardService {
 	 */
 	public TodoCardDetailResponseDto getTodoCard(Long todoCardId) {
 
-		TodoCard todoCard = getTodoCardById(todoCardId);
+		TodoCard todoCard = todoCardRepository.getTodoCardById(todoCardId);
 
 		return new TodoCardDetailResponseDto(todoCard);
 	}
@@ -92,15 +92,10 @@ public class TodoCardService {
 
 	private TodoCard getValidTodoCard(Long todoCardId, String username) {
 
-		TodoCard todoCard = getTodoCardById(todoCardId);
+		TodoCard todoCard = todoCardRepository.getTodoCardById(todoCardId);
 		validateRealUser(username, todoCard.getAuthor().getUsername());
 
 		return todoCard;
-	}
-
-	private TodoCard getTodoCardById(Long todoCardId) {
-		return todoCardRepository.findById(todoCardId)
-			.orElseThrow(() -> new IllegalArgumentException("잘못된 아이디"));
 	}
 
 	private void validateRealUser(String username, String author) {
