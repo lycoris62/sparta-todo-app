@@ -1,14 +1,14 @@
 package sparta.todoapp.global.error;
 
-import static sparta.todoapp.global.error.ErrorCode.*;
+import static sparta.todoapp.global.error.ErrorCode.DUPLICATE_USERNAME;
+import static sparta.todoapp.global.error.ErrorCode.INVALID_INPUT_LENGTH;
+import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import sparta.todoapp.global.error.exception.AccessDeniedException;
 import sparta.todoapp.global.error.exception.DuplicateUsernameException;
 import sparta.todoapp.global.error.exception.ServiceException;
 import sparta.todoapp.global.error.exception.UserNotFoundException;
@@ -46,15 +46,6 @@ public class GlobalExceptionHandler {
 	protected ResponseEntity<ErrorResponse> handleDuplicateUsernameException(DuplicateUsernameException e) {
 		ErrorResponse response = new ErrorResponse(DUPLICATE_USERNAME.getMessage());
 		return new ResponseEntity<>(response, DUPLICATE_USERNAME.getHttpStatus());
-	}
-
-	/**
-	 * 다른 사용자의 할일카드나 댓글에 접근하는 경우.
-	 */
-	@ExceptionHandler(AccessDeniedException.class)
-	protected ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
-		ErrorResponse response = new ErrorResponse(ACCESS_DENIED.getMessage());
-		return new ResponseEntity<>(response, ACCESS_DENIED.getHttpStatus());
 	}
 
 	/**
