@@ -5,10 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static sparta.todoapp.global.error.ErrorCode.DUPLICATE_USERNAME;
 import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +53,7 @@ class AuthServiceTest {
 			username, password, password);
 		User user = User.createUser(username, password);
 
-		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(false);
+//		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(false);
 		given(userRepository.save(any(User.class))).willReturn(user);
 
 		// when
@@ -70,7 +71,9 @@ class AuthServiceTest {
 		String password = "12345678";
 		AuthSignUpRequestDto authRequestDto = new AuthSignUpRequestDto(username, password, password);
 
-		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(true);
+		doThrow(new ServiceException(DUPLICATE_USERNAME))
+			.when(userRepository)
+			.checkExistingUsername(authRequestDto.getUsername());
 
 		// when & then
 		assertThatThrownBy(() -> authService.signup(authRequestDto))
@@ -93,7 +96,7 @@ class AuthServiceTest {
 		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 		User user = User.createUser(username, password);
 
-		given(userRepository.findByUsername(authRequestDto.getUsername())).willReturn(Optional.of(user));
+		given(userRepository.getUserByUsername(authRequestDto.getUsername())).willReturn(user);
 		given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
 		given(jwtUtil.createToken(authRequestDto.getUsername(), userRoleEnum)).willReturn(anyString());
 
@@ -112,7 +115,7 @@ class AuthServiceTest {
 		String password = "12345678";
 		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 
-		given(userRepository.findByUsername(authRequestDto.getUsername()))
+		given(userRepository.getUserByUsername(authRequestDto.getUsername()))
 			.willThrow(new ServiceException(USER_NOT_FOUND));
 
 		// when & then
@@ -135,7 +138,7 @@ class AuthServiceTest {
 		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 		User user = User.createUser(username, password);
 
-		given(userRepository.findByUsername(authRequestDto.getUsername())).willReturn(Optional.of(user));
+		given(userRepository.getUserByUsername(authRequestDto.getUsername())).willReturn(user);
 		given(passwordEncoder.matches(anyString(), anyString())).willReturn(false);
 
 		// when & then
