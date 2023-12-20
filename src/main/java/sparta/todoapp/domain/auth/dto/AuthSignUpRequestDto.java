@@ -4,6 +4,10 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+
+/**
+ * 회원가입에 사용되는 인증 요청 DTO
+ */
 @Getter
 @RequiredArgsConstructor
 public class AuthSignUpRequestDto {

@@ -1,14 +1,13 @@
 package sparta.todoapp.domain.auth.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.AuthLoginRequestDto;
 import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
 import sparta.todoapp.domain.auth.service.AuthService;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
@@ -43,7 +42,7 @@ public class AuthController {
 	 * @return 헤더에 JWT 반환
 	 */
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@Valid @RequestBody AuthRequestDto requestDto) {
+	public ResponseEntity<?> login(@Valid @RequestBody AuthLoginRequestDto requestDto) {
 
 		String token = authService.login(requestDto);
 
