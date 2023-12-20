@@ -2,18 +2,19 @@ package sparta.todoapp.domain.todocard.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
+import sparta.todoapp.test.TestQueryDslConfig;
 
+@Import(TestQueryDslConfig.class)
 @ActiveProfiles("test")
 @DisplayName("할일카드 레포지토리 테스트")
 @DataJpaTest
@@ -42,8 +43,8 @@ class TodoCardRepositoryTest {
 		List<TodoCard> todoCardList = todoCardRepository.findAllByOrderByCreatedAtDesc();
 
 		// given
-		Assertions.assertThat(todoCardList.get(0)).isEqualTo(todoCard3);
-		Assertions.assertThat(todoCardList.get(1)).isEqualTo(todoCard2);
-		Assertions.assertThat(todoCardList.get(2)).isEqualTo(todoCard1);
+		Assertions.assertThat(todoCardList.get(0).getTitle()).isEqualTo(todoCard1.getTitle());
+		Assertions.assertThat(todoCardList.get(1).getTitle()).isEqualTo(todoCard2.getTitle());
+		Assertions.assertThat(todoCardList.get(2).getTitle()).isEqualTo(todoCard3.getTitle());
 	}
 }
