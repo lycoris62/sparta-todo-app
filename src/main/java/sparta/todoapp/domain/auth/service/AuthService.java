@@ -2,6 +2,7 @@ package sparta.todoapp.domain.auth.service;
 
 import static sparta.todoapp.global.error.ErrorCode.DUPLICATE_USERNAME;
 import static sparta.todoapp.global.error.ErrorCode.PASSWORD_MISMATCH;
+import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +19,6 @@ import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.global.config.security.CustomUserDetails;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 import sparta.todoapp.global.error.exception.ServiceException;
-import sparta.todoapp.global.error.exception.UserNotFoundException;
 
 /**
  * 로그인과 회원가입과 같이 인증을 담당하는 서비스
@@ -74,7 +74,7 @@ public class AuthService {
 	public String login(AuthRequestDto requestDto) {
 
 		User user = userRepository.findByUsername(requestDto.getUsername())
-			.orElseThrow(UserNotFoundException::new);
+			.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
 
 		Authentication authentication = getAuthentication(requestDto.getPassword(), user);
 		setAuthentication(authentication);
@@ -91,7 +91,7 @@ public class AuthService {
 
 	private void validatePassword(String rawPassword, String encodedPassword) {
 		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-			throw new UserNotFoundException();
+			throw new ServiceException(USER_NOT_FOUND);
 		}
 	}
 
