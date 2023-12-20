@@ -1,6 +1,5 @@
 package sparta.todoapp.domain.auth.service;
 
-import static sparta.todoapp.global.error.ErrorCode.DUPLICATE_USERNAME;
 import static sparta.todoapp.global.error.ErrorCode.PASSWORD_MISMATCH;
 import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
@@ -56,14 +55,8 @@ public class AuthService {
 	}
 
 	private User createUser(String username, String encodedPassword) {
-		checkExistingUsername(username); // 이미 유저네임이 있는지 검증
+		userRepository.checkExistingUsername(username); // 이미 유저네임이 있는지 검증
 		return User.createUser(username, encodedPassword);
-	}
-
-	private void checkExistingUsername(String username) {
-		if (userRepository.existsByUsername(username)) {
-			throw new ServiceException(DUPLICATE_USERNAME);
-		}
 	}
 
 	/**
@@ -73,8 +66,7 @@ public class AuthService {
 	 */
 	public String login(AuthLoginRequestDto requestDto) {
 
-		User user = userRepository.findByUsername(requestDto.getUsername())
-			.orElseThrow(() -> new ServiceException(USER_NOT_FOUND));
+		User user = userRepository.getUserByUsername(requestDto.getUsername());
 
 		Authentication authentication = getAuthentication(requestDto.getPassword(), user);
 		setAuthentication(authentication);
