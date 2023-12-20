@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 import sparta.todoapp.global.error.exception.DuplicateUsernameException;
 import sparta.todoapp.global.error.exception.UserNotFoundException;
@@ -24,7 +25,7 @@ class AuthControllerTest extends ControllerTest {
 	@Test
 	void signup() throws Exception {
 		// given
-		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
+		AuthSignUpRequestDto authRequestDto = new AuthSignUpRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD, TEST_USER_PASSWORD);
 
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
 
@@ -43,7 +44,7 @@ class AuthControllerTest extends ControllerTest {
 		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
 
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
-		doThrow(new DuplicateUsernameException()).when(authService).signup(any(AuthRequestDto.class));
+		doThrow(new DuplicateUsernameException()).when(authService).signup(any(AuthSignUpRequestDto.class));
 
 		// when
 		ResultActions resultActions = mvc.perform(post("/api/auth/signup")

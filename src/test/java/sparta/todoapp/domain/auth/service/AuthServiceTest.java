@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.entity.UserRoleEnum;
 import sparta.todoapp.domain.auth.repository.UserRepository;
@@ -44,13 +45,15 @@ class AuthServiceTest {
 		String username = "jaeyun";
 		String password = "12345678";
 		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthSignUpRequestDto authSignUpRequestDto = new AuthSignUpRequestDto(username, password,
+			password);
 		User user = User.createUser(username, password);
 
 		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(false);
 		given(userRepository.save(any(User.class))).willReturn(user);
 
 		// when
-		authService.signup(authRequestDto);
+		authService.signup(authSignUpRequestDto);
 
 		// then
 		assertThat(authRequestDto.getUsername()).isEqualTo(username);
@@ -62,7 +65,7 @@ class AuthServiceTest {
 		// given
 		String username = "jaeyun";
 		String password = "12345678";
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthSignUpRequestDto authRequestDto = new AuthSignUpRequestDto(username, password, password);
 
 		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(true);
 
