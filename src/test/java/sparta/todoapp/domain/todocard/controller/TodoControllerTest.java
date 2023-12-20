@@ -1,9 +1,16 @@
 package sparta.todoapp.domain.todocard.controller;
 
-import static java.util.stream.Collectors.*;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static java.util.stream.Collectors.groupingBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyLong;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static sparta.todoapp.global.error.ErrorCode.ACCESS_DENIED;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -11,12 +18,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.model.BaseEntity;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardCreateRequestDto;
@@ -24,7 +29,7 @@ import sparta.todoapp.domain.todocard.dto.request.TodoCardEditRequestDto;
 import sparta.todoapp.domain.todocard.dto.response.TodoCardDetailResponseDto;
 import sparta.todoapp.domain.todocard.dto.response.TodoCardSimpleResponseDto;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
-import sparta.todoapp.global.error.exception.AccessDeniedException;
+import sparta.todoapp.global.error.exception.ServiceException;
 import sparta.todoapp.test.ControllerTest;
 import sparta.todoapp.test.TodoCardTest;
 
@@ -139,7 +144,7 @@ class TodoControllerTest extends ControllerTest implements TodoCardTest {
 
 		String json = objectMapper.writeValueAsString(requestDto);
 		given(todoCardService.editTodoCard(anyLong(), any(TodoCardEditRequestDto.class), anyString()))
-			.willThrow(new AccessDeniedException());
+			.willThrow(new ServiceException(ACCESS_DENIED));
 
 		// when
 		ResultActions resultActions = mvc.perform(patch("/api/todocards/{todoCardId}", TODO_CARD_ID_01)

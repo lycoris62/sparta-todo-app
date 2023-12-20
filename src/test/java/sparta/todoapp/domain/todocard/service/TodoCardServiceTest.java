@@ -1,14 +1,17 @@
 package sparta.todoapp.domain.todocard.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static sparta.todoapp.global.error.ErrorCode.ACCESS_DENIED;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
-
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardCreateRequestDto;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardEditRequestDto;
@@ -24,7 +26,8 @@ import sparta.todoapp.domain.todocard.dto.response.TodoCardDetailResponseDto;
 import sparta.todoapp.domain.todocard.dto.response.TodoCardSimpleResponseDto;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
-import sparta.todoapp.global.error.exception.AccessDeniedException;
+import sparta.todoapp.global.error.ErrorCode;
+import sparta.todoapp.global.error.exception.ServiceException;
 
 @ActiveProfiles("test")
 @DisplayName("할일카드의 서비스 테스트")
@@ -238,11 +241,16 @@ class TodoCardServiceTest {
 			.createdAt(createRequestDto.getCreatedAt())
 			.build();
 
-		given(todoCardRepository.findById(todoCardId)).willThrow(new AccessDeniedException());
+		given(todoCardRepository.findById(todoCardId)).willThrow(new ServiceException(ACCESS_DENIED));
 
 		// when & then
 		assertThatThrownBy(() -> todoCardService.editTodoCard(todoCardId, editRequestDto, username))
-			.isInstanceOf(AccessDeniedException.class);
+			.isInstanceOf(ServiceException.class)
+			.satisfies(exception -> {
+				ErrorCode errorCode = ((ServiceException) exception).getErrorCode();
+				assertThat(errorCode.getMessage()).isEqualTo("작성자만 삭제/수정할 수 있습니다.");
+				assertThat(errorCode.getHttpStatus()).isEqualTo(BAD_REQUEST);
+			});
 	}
 
 	@DisplayName("할일카드 완료 성공")

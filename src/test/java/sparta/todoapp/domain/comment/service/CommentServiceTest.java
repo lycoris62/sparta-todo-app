@@ -1,11 +1,13 @@
 package sparta.todoapp.domain.comment.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
-
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.comment.dto.request.CommentCreateRequestDto;
 import sparta.todoapp.domain.comment.dto.request.CommentEditRequestDto;
@@ -23,7 +24,8 @@ import sparta.todoapp.domain.comment.entity.Comment;
 import sparta.todoapp.domain.comment.repository.CommentRepository;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
-import sparta.todoapp.global.error.exception.AccessDeniedException;
+import sparta.todoapp.global.error.ErrorCode;
+import sparta.todoapp.global.error.exception.ServiceException;
 
 @ActiveProfiles("test")
 @DisplayName("댓글의 서비스 테스트")
@@ -137,6 +139,12 @@ class CommentServiceTest {
 		given(commentRepository.findById(commentId)).willReturn(Optional.of(comment));
 
 		// when & when
-		assertThatThrownBy(() -> commentService.editComment(todoCardId, requestDto, user2)).isInstanceOf(AccessDeniedException.class);
+		assertThatThrownBy(() -> commentService.editComment(todoCardId, requestDto, user2))
+			.isInstanceOf(ServiceException.class)
+			.satisfies(exception -> {
+				ErrorCode errorCode = ((ServiceException) exception).getErrorCode();
+				assertThat(errorCode.getMessage()).isEqualTo("작성자만 삭제/수정할 수 있습니다.");
+				assertThat(errorCode.getHttpStatus()).isEqualTo(BAD_REQUEST);
+			});
 	}
 }
