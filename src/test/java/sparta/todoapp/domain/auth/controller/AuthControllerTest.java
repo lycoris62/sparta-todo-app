@@ -15,7 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.AuthLoginRequestDto;
 import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 import sparta.todoapp.global.error.exception.ServiceException;
@@ -44,7 +44,7 @@ class AuthControllerTest extends ControllerTest {
 	@Test
 	void signup_fail_duplicate_username() throws Exception {
 		// given
-		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
 
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
 		doThrow(new ServiceException(DUPLICATE_USERNAME)).when(authService).signup(any(AuthSignUpRequestDto.class));
@@ -65,10 +65,10 @@ class AuthControllerTest extends ControllerTest {
 	@Test
 	void login() throws Exception {
 		// given
-		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
 
-		given(authService.login(any(AuthRequestDto.class))).willReturn("token");
+		given(authService.login(any(AuthLoginRequestDto.class))).willReturn("token");
 
 		// when
 		ResultActions resultActions = mvc.perform(post("/api/auth/login")
@@ -86,10 +86,10 @@ class AuthControllerTest extends ControllerTest {
 	@Test
 	void login_fail_user_not_found() throws Exception {
 		// given
-		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
 
-		given(authService.login(any(AuthRequestDto.class))).willThrow(new ServiceException(USER_NOT_FOUND));
+		given(authService.login(any(AuthLoginRequestDto.class))).willThrow(new ServiceException(USER_NOT_FOUND));
 
 		// when
 		ResultActions resultActions = mvc.perform(post("/api/auth/login")

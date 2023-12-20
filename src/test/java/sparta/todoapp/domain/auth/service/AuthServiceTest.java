@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.AuthLoginRequestDto;
 import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.entity.UserRoleEnum;
@@ -47,9 +47,9 @@ class AuthServiceTest {
 		// given
 		String username = "jaeyun";
 		String password = "12345678";
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
-		AuthSignUpRequestDto authSignUpRequestDto = new AuthSignUpRequestDto(username, password,
-			password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
+		AuthSignUpRequestDto authSignUpRequestDto = new AuthSignUpRequestDto(
+			username, password, password);
 		User user = User.createUser(username, password);
 
 		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(false);
@@ -90,7 +90,7 @@ class AuthServiceTest {
 		String password = "12345678";
 		UserRoleEnum userRoleEnum = UserRoleEnum.USER;
 
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 		User user = User.createUser(username, password);
 
 		given(userRepository.findByUsername(authRequestDto.getUsername())).willReturn(Optional.of(user));
@@ -110,7 +110,7 @@ class AuthServiceTest {
 		// given
 		String username = "jaeyun";
 		String password = "12345678";
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 
 		given(userRepository.findByUsername(authRequestDto.getUsername()))
 			.willThrow(new ServiceException(USER_NOT_FOUND));
@@ -132,7 +132,7 @@ class AuthServiceTest {
 		String username = "jaeyun";
 		String password = "12345678";
 
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 		User user = User.createUser(username, password);
 
 		given(userRepository.findByUsername(authRequestDto.getUsername())).willReturn(Optional.of(user));

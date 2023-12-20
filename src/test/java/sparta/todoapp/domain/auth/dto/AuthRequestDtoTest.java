@@ -1,18 +1,16 @@
 package sparta.todoapp.domain.auth.dto;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.Set;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @DisplayName("로그인 및 회원가입 요청 DTO 테스트")
@@ -34,7 +32,7 @@ class AuthRequestDtoTest {
 		// given & when
 		String username = "username";
 		String password = "12345678";
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 
 		// then
 		assertThat(authRequestDto.getUsername()).isEqualTo(username);
@@ -48,10 +46,10 @@ class AuthRequestDtoTest {
 		// given
 		String username = "us";
 		String password = "1234";
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 
 		// when
-		Set<ConstraintViolation<AuthRequestDto>> violations = validator.validate(authRequestDto);
+		Set<ConstraintViolation<AuthLoginRequestDto>> violations = validator.validate(authRequestDto);
 
 		// then
 		assertThat(violations.size()).isEqualTo(2);
