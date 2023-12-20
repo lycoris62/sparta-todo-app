@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +25,6 @@ import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 import sparta.todoapp.global.error.ErrorCode;
 import sparta.todoapp.global.error.exception.ServiceException;
-import sparta.todoapp.global.error.exception.UserNotFoundException;
 
 @ActiveProfiles("test")
 @DisplayName("로그인 및 회원가입 요청 서비스 테스트")
@@ -112,10 +112,17 @@ class AuthServiceTest {
 		String password = "12345678";
 		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
 
-		given(userRepository.findByUsername(authRequestDto.getUsername())).willThrow(UserNotFoundException.class);
+		given(userRepository.findByUsername(authRequestDto.getUsername()))
+			.willThrow(new ServiceException(USER_NOT_FOUND));
 
 		// when & then
-		assertThatThrownBy(() -> authService.login(authRequestDto)).isInstanceOf(UserNotFoundException.class);
+		assertThatThrownBy(() -> authService.login(authRequestDto))
+			.isInstanceOf(ServiceException.class)
+			.satisfies(exception -> {
+				ErrorCode errorCode = ((ServiceException) exception).getErrorCode();
+				assertThat(errorCode.getMessage()).isEqualTo("회원을 찾을 수 없습니다.");
+				assertThat(errorCode.getHttpStatus()).isEqualTo(BAD_REQUEST);
+			});
 	}
 
 	@DisplayName("로그인 실패 - 잘못된 비밀번호")
@@ -132,6 +139,12 @@ class AuthServiceTest {
 		given(passwordEncoder.matches(anyString(), anyString())).willReturn(false);
 
 		// when & then
-		assertThatThrownBy(() -> authService.login(authRequestDto)).isInstanceOf(UserNotFoundException.class);
+		assertThatThrownBy(() -> authService.login(authRequestDto))
+			.isInstanceOf(ServiceException.class)
+			.satisfies(exception -> {
+				ErrorCode errorCode = ((ServiceException) exception).getErrorCode();
+				assertThat(errorCode.getMessage()).isEqualTo("회원을 찾을 수 없습니다.");
+				assertThat(errorCode.getHttpStatus()).isEqualTo(BAD_REQUEST);
+			});
 	}
 }

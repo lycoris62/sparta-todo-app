@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static sparta.todoapp.global.error.ErrorCode.DUPLICATE_USERNAME;
+import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +19,6 @@ import sparta.todoapp.domain.auth.dto.AuthRequestDto;
 import sparta.todoapp.domain.auth.dto.AuthSignUpRequestDto;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 import sparta.todoapp.global.error.exception.ServiceException;
-import sparta.todoapp.global.error.exception.UserNotFoundException;
 import sparta.todoapp.test.ControllerTest;
 
 @DisplayName("인증 컨트롤러 테스트")
@@ -89,7 +89,7 @@ class AuthControllerTest extends ControllerTest {
 		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
 
-		given(authService.login(any(AuthRequestDto.class))).willThrow(new UserNotFoundException());
+		given(authService.login(any(AuthRequestDto.class))).willThrow(new ServiceException(USER_NOT_FOUND));
 
 		// when
 		ResultActions resultActions = mvc.perform(post("/api/auth/login")
