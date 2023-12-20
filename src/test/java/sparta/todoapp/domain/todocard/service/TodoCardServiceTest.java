@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -86,7 +85,7 @@ class TodoCardServiceTest {
 		LocalDateTime now = LocalDateTime.now();
 		TodoCard todoCard = new TodoCard(title, content, user, now);
 
-		given(todoCardRepository.findById(todoCardId)).willReturn(Optional.of(todoCard));
+		given(todoCardRepository.getTodoCardById(todoCardId)).willReturn(todoCard);
 
 		// when
 		TodoCardDetailResponseDto findTodoCard = todoCardService.getTodoCard(todoCardId);
@@ -113,7 +112,7 @@ class TodoCardServiceTest {
 		LocalDateTime now = LocalDateTime.now();
 		new TodoCard(title, content, user, now);
 
-		given(todoCardRepository.findById(todoCardId)).willThrow(new IllegalArgumentException("잘못된 아이디"));
+		given(todoCardRepository.getTodoCardById(todoCardId)).willThrow(new IllegalArgumentException("잘못된 아이디"));
 
 		// when & then
 		assertThatThrownBy(() -> todoCardService.getTodoCard(todoCardId))
@@ -176,7 +175,7 @@ class TodoCardServiceTest {
 			.createdAt(createRequestDto.getCreatedAt())
 			.build();
 
-		given(todoCardRepository.findById(todoCardId)).willReturn(Optional.of(todoCard));
+		given(todoCardRepository.getTodoCardById(todoCardId)).willReturn(todoCard);
 
 		// when
 		TodoCardDetailResponseDto responseDto = todoCardService.editTodoCard(todoCardId, editRequestDto, username);
@@ -211,7 +210,7 @@ class TodoCardServiceTest {
 			.createdAt(createRequestDto.getCreatedAt())
 			.build();
 
-		given(todoCardRepository.findById(todoCardId)).willThrow(new IllegalArgumentException("잘못된 아이디"));
+		given(todoCardRepository.getTodoCardById(todoCardId)).willThrow(new IllegalArgumentException("잘못된 아이디"));
 
 		// when & then
 		assertThatThrownBy(() -> todoCardService.editTodoCard(todoCardId, editRequestDto, username))
@@ -241,7 +240,7 @@ class TodoCardServiceTest {
 			.createdAt(createRequestDto.getCreatedAt())
 			.build();
 
-		given(todoCardRepository.findById(todoCardId)).willThrow(new ServiceException(ACCESS_DENIED));
+		given(todoCardRepository.getTodoCardById(todoCardId)).willThrow(new ServiceException(ACCESS_DENIED));
 
 		// when & then
 		assertThatThrownBy(() -> todoCardService.editTodoCard(todoCardId, editRequestDto, username))
@@ -274,7 +273,7 @@ class TodoCardServiceTest {
 			.createdAt(createRequestDto.getCreatedAt())
 			.build();
 
-		given(todoCardRepository.findById(todoCardId)).willReturn(Optional.of(todoCard));
+		given(todoCardRepository.getTodoCardById(todoCardId)).willReturn(todoCard);
 
 		// when
 		todoCardService.finishTodoCard(todoCardId, username);
