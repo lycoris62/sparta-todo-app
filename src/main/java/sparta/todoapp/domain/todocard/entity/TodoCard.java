@@ -1,5 +1,6 @@
 package sparta.todoapp.domain.todocard.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -48,8 +49,11 @@ public class TodoCard extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User author;
 
-	@OneToMany(mappedBy = "todoCard")
+	@OneToMany(mappedBy = "todoCard", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> commentList = new ArrayList<>();
+
+	@OneToMany(mappedBy = "todoCard", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Like> likeList = new ArrayList<>();
 
 	@Builder
 	public TodoCard(String title, String content, User author, LocalDateTime createdAt) {
