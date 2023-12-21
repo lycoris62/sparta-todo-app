@@ -76,7 +76,7 @@ public class CommentService {
 	}
 
 	private void accessCheck(User user, Comment comment) {
-		if (!user.equals(comment.getAuthor())) {
+		if (!user.getId().equals(comment.getAuthor().getId())) {
 			throw new ServiceException(ACCESS_DENIED);
 		}
 	}
