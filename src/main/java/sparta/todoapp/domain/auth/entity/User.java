@@ -1,5 +1,6 @@
 package sparta.todoapp.domain.auth.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,11 +8,15 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import sparta.todoapp.domain.model.BaseEntity;
+import sparta.todoapp.domain.todocard.entity.Like;
 
 /**
  * 사용자 엔티티.
@@ -35,6 +40,9 @@ public class User extends BaseEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING) // ORDINAL 로 하면 정수로 저장이 되므로 이후 Role 추가 시 문제 생길 여지 있음
 	private UserRoleEnum role;
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Like> likeList = new ArrayList<>();
 
 	private User(String username, String password, UserRoleEnum role) {
 		this.username = username;
