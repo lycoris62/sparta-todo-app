@@ -103,4 +103,14 @@ public class TodoCardService {
 			throw new ServiceException(ACCESS_DENIED);
 		}
 	}
+
+	/**
+	 * 할일카드 삭제
+	 */
+	@Transactional
+	public void delete(Long todoCardId, String username) {
+
+		TodoCard todoCard = getValidTodoCard(todoCardId, username); // 사용자가 작성한 할일카드만 가져옴
+		todoCardRepository.delete(todoCard);
+	}
 }
