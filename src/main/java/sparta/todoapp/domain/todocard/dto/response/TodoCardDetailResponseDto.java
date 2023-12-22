@@ -19,6 +19,7 @@ public class TodoCardDetailResponseDto {
 	private final String username;
 	private final LocalDateTime createdAt;
 	private final List<CommentResponseDto> comments;
+	private final long likeCount;
 
 	public TodoCardDetailResponseDto(TodoCard todoCard) {
 		this.id = todoCard.getId();
@@ -26,9 +27,7 @@ public class TodoCardDetailResponseDto {
 		this.content = todoCard.getContent();
 		this.username = todoCard.getAuthor().getUsername();
 		this.createdAt = todoCard.getCreatedAt();
-		this.comments = todoCard.getCommentList()
-			.stream()
-			.map(CommentResponseDto::new)
-			.toList();
+		this.comments = todoCard.getCommentResponseList();
+		this.likeCount = todoCard.getLikeCount();
 	}
 }
