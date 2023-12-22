@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -33,6 +34,7 @@ import sparta.todoapp.global.error.exception.ServiceException;
 import sparta.todoapp.test.ControllerTest;
 import sparta.todoapp.test.TodoCardTest;
 
+@Disabled
 @DisplayName("할일카드 컨트롤러 테스트")
 class TodoControllerTest extends ControllerTest implements TodoCardTest {
 

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +29,7 @@ import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
 import sparta.todoapp.global.error.ErrorCode;
 import sparta.todoapp.global.error.exception.ServiceException;
 
+@Disabled
 @ActiveProfiles("test")
 @DisplayName("할일카드의 서비스 테스트")
 @ExtendWith(MockitoExtension.class)

@@ -30,4 +30,17 @@ public class TodoCardDetailResponseDto {
 		this.comments = todoCard.getCommentResponseList();
 		this.likeCount = todoCard.getLikeCount();
 	}
+
+//	public TodoCardDetailResponseDto(TodoCard todoCard) {
+//		this.id = todoCard.getId();
+//		this.title = todoCard.getTitle();
+//		this.content = todoCard.getContent();
+//		this.username = todoCard.getAuthor().getUsername();
+//		this.createdAt = todoCard.getCreatedAt();
+//		this.comments = todoCard.getCommentList()
+//			.stream()
+//			.map(CommentResponseDto::new)
+//			.toList();
+//		this.likeCount = todoCard.getLikeList().size();
+//	}
 }

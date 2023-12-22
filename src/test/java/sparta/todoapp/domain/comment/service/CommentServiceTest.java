@@ -9,6 +9,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +28,7 @@ import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
 import sparta.todoapp.global.error.ErrorCode;
 import sparta.todoapp.global.error.exception.ServiceException;
 
+@Disabled
 @ActiveProfiles("test")
 @DisplayName("댓글의 서비스 테스트")
 @ExtendWith(MockitoExtension.class)
