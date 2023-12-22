@@ -1,14 +1,16 @@
 package sparta.todoapp.domain.auth.controller;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthCheckUsernameRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthLoginRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthSignUpRequestDto;
+import sparta.todoapp.domain.auth.dto.response.AuthCheckUsernameResponseDto;
 import sparta.todoapp.domain.auth.service.AuthService;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
 
@@ -29,11 +31,23 @@ public class AuthController {
 	 * @param requestDto username, password 를 가짐
 	 */
 	@PostMapping("/signup")
-	public ResponseEntity<?> signup(@Valid @RequestBody AuthRequestDto requestDto) {
+	public ResponseEntity<?> signup(@Valid @RequestBody AuthSignUpRequestDto requestDto) {
 
 		authService.signup(requestDto);
 
 		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * 입력받은 username이 존재하는지를 체크
+	 * @param requestDto username 를 가짐
+	 */
+	@PostMapping("/signup/check")
+	public ResponseEntity<AuthCheckUsernameResponseDto> checkUsername(@Valid @RequestBody AuthCheckUsernameRequestDto requestDto) {
+
+		AuthCheckUsernameResponseDto responseDto = authService.checkExistingUsername(requestDto);
+
+		return ResponseEntity.ok(responseDto);
 	}
 
 	/**
@@ -42,7 +56,7 @@ public class AuthController {
 	 * @return 헤더에 JWT 반환
 	 */
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@Valid @RequestBody AuthRequestDto requestDto) {
+	public ResponseEntity<?> login(@Valid @RequestBody AuthLoginRequestDto requestDto) {
 
 		String token = authService.login(requestDto);
 

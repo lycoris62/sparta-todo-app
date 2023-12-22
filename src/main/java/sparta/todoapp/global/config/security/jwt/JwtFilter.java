@@ -1,8 +1,16 @@
 package sparta.todoapp.global.config.security.jwt;
 
+import static sparta.todoapp.global.error.ErrorCode.INVALID_TOKEN;
+
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -11,15 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import sparta.todoapp.global.error.exception.InvalidTokenException;
+import sparta.todoapp.global.error.exception.ServiceException;
 
 /**
  * 헤더에서 JWT 가져와서 인증 객체 생성
@@ -48,7 +48,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		if (!jwtUtil.isTokenValid(tokenValue)) { // 유효성 검증
 			log.error("토큰 에러");
-			throw new InvalidTokenException();
+			throw new ServiceException(INVALID_TOKEN);
 		}
 
 		Claims info = jwtUtil.getUserInfoFromToken(tokenValue);

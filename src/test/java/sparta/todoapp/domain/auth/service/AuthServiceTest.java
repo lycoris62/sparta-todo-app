@@ -1,9 +1,14 @@
 package sparta.todoapp.domain.auth.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static sparta.todoapp.global.error.ErrorCode.DUPLICATE_USERNAME;
+import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,14 +18,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-
-import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthLoginRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthSignUpRequestDto;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.entity.UserRoleEnum;
 import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
-import sparta.todoapp.global.error.exception.DuplicateUsernameException;
-import sparta.todoapp.global.error.exception.UserNotFoundException;
+import sparta.todoapp.global.error.ErrorCode;
+import sparta.todoapp.global.error.exception.ServiceException;
 
 @ActiveProfiles("test")
 @DisplayName("로그인 및 회원가입 요청 서비스 테스트")
@@ -43,14 +48,16 @@ class AuthServiceTest {
 		// given
 		String username = "jaeyun";
 		String password = "12345678";
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
+		AuthSignUpRequestDto authSignUpRequestDto = new AuthSignUpRequestDto(
+			username, password, password);
 		User user = User.createUser(username, password);
 
-		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(false);
+//		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(false);
 		given(userRepository.save(any(User.class))).willReturn(user);
 
 		// when
-		authService.signup(authRequestDto);
+		authService.signup(authSignUpRequestDto);
 
 		// then
 		assertThat(authRequestDto.getUsername()).isEqualTo(username);
@@ -62,12 +69,20 @@ class AuthServiceTest {
 		// given
 		String username = "jaeyun";
 		String password = "12345678";
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthSignUpRequestDto authRequestDto = new AuthSignUpRequestDto(username, password, password);
 
-		given(userRepository.existsByUsername(authRequestDto.getUsername())).willReturn(true);
+		doThrow(new ServiceException(DUPLICATE_USERNAME))
+			.when(userRepository)
+			.checkExistingUsername(authRequestDto.getUsername());
 
 		// when & then
-		assertThatThrownBy(() -> authService.signup(authRequestDto)).isInstanceOf(DuplicateUsernameException.class);
+		assertThatThrownBy(() -> authService.signup(authRequestDto))
+			.isInstanceOf(ServiceException.class)
+			.satisfies(exception -> {
+				ErrorCode errorCode = ((ServiceException) exception).getErrorCode();
+				assertThat(errorCode.getMessage()).isEqualTo("중복된 username 입니다.");
+				assertThat(errorCode.getHttpStatus()).isEqualTo(BAD_REQUEST);
+			});
 	}
 
 	@DisplayName("로그인 성공")
@@ -78,10 +93,10 @@ class AuthServiceTest {
 		String password = "12345678";
 		UserRoleEnum userRoleEnum = UserRoleEnum.USER;
 
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 		User user = User.createUser(username, password);
 
-		given(userRepository.findByUsername(authRequestDto.getUsername())).willReturn(Optional.of(user));
+		given(userRepository.getUserByUsername(authRequestDto.getUsername())).willReturn(user);
 		given(passwordEncoder.matches(anyString(), anyString())).willReturn(true);
 		given(jwtUtil.createToken(authRequestDto.getUsername(), userRoleEnum)).willReturn(anyString());
 
@@ -98,12 +113,19 @@ class AuthServiceTest {
 		// given
 		String username = "jaeyun";
 		String password = "12345678";
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 
-		given(userRepository.findByUsername(authRequestDto.getUsername())).willThrow(UserNotFoundException.class);
+		given(userRepository.getUserByUsername(authRequestDto.getUsername()))
+			.willThrow(new ServiceException(USER_NOT_FOUND));
 
 		// when & then
-		assertThatThrownBy(() -> authService.login(authRequestDto)).isInstanceOf(UserNotFoundException.class);
+		assertThatThrownBy(() -> authService.login(authRequestDto))
+			.isInstanceOf(ServiceException.class)
+			.satisfies(exception -> {
+				ErrorCode errorCode = ((ServiceException) exception).getErrorCode();
+				assertThat(errorCode.getMessage()).isEqualTo("회원을 찾을 수 없습니다.");
+				assertThat(errorCode.getHttpStatus()).isEqualTo(BAD_REQUEST);
+			});
 	}
 
 	@DisplayName("로그인 실패 - 잘못된 비밀번호")
@@ -113,13 +135,19 @@ class AuthServiceTest {
 		String username = "jaeyun";
 		String password = "12345678";
 
-		AuthRequestDto authRequestDto = new AuthRequestDto(username, password);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(username, password);
 		User user = User.createUser(username, password);
 
-		given(userRepository.findByUsername(authRequestDto.getUsername())).willReturn(Optional.of(user));
+		given(userRepository.getUserByUsername(authRequestDto.getUsername())).willReturn(user);
 		given(passwordEncoder.matches(anyString(), anyString())).willReturn(false);
 
 		// when & then
-		assertThatThrownBy(() -> authService.login(authRequestDto)).isInstanceOf(UserNotFoundException.class);
+		assertThatThrownBy(() -> authService.login(authRequestDto))
+			.isInstanceOf(ServiceException.class)
+			.satisfies(exception -> {
+				ErrorCode errorCode = ((ServiceException) exception).getErrorCode();
+				assertThat(errorCode.getMessage()).isEqualTo("회원을 찾을 수 없습니다.");
+				assertThat(errorCode.getHttpStatus()).isEqualTo(BAD_REQUEST);
+			});
 	}
 }

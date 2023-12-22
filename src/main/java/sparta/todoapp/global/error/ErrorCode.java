@@ -19,7 +19,8 @@ public enum ErrorCode {
 	ACCESS_DENIED(BAD_REQUEST, "작성자만 삭제/수정할 수 있습니다."),
 	DUPLICATE_USERNAME(BAD_REQUEST, "중복된 username 입니다."),
 	USER_NOT_FOUND(BAD_REQUEST, "회원을 찾을 수 없습니다."),
-	INVALID_INPUT_LENGTH(BAD_REQUEST, "입력 길이 미충족");
+	INVALID_INPUT_LENGTH(BAD_REQUEST, "입력 길이 미충족"),
+	PASSWORD_MISMATCH(BAD_REQUEST, "확인용 비밀번호가 다릅니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

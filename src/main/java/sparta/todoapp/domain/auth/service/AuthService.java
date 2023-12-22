@@ -1,5 +1,9 @@
 package sparta.todoapp.domain.auth.service;
 
+import static sparta.todoapp.global.error.ErrorCode.PASSWORD_MISMATCH;
+import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -7,15 +11,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.RequiredArgsConstructor;
-import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthCheckUsernameRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthLoginRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthSignUpRequestDto;
+import sparta.todoapp.domain.auth.dto.response.AuthCheckUsernameResponseDto;
 import sparta.todoapp.domain.auth.entity.User;
 import sparta.todoapp.domain.auth.repository.UserRepository;
 import sparta.todoapp.global.config.security.CustomUserDetails;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
-import sparta.todoapp.global.error.exception.DuplicateUsernameException;
-import sparta.todoapp.global.error.exception.UserNotFoundException;
+import sparta.todoapp.global.error.exception.ServiceException;
 
 /**
  * 로그인과 회원가입과 같이 인증을 담당하는 서비스
@@ -34,7 +38,9 @@ public class AuthService {
 	 * @param requestDto username, password 를 가지는 DTO
 	 */
 	@Transactional
-	public void signup(AuthRequestDto requestDto) {
+	public void signup(AuthSignUpRequestDto requestDto) {
+
+		validateConfirmPassword(requestDto);
 
 		String username = requestDto.getUsername();
 		String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
@@ -44,15 +50,15 @@ public class AuthService {
 		userRepository.save(createdUser);
 	}
 
-	private User createUser(String username, String encodedPassword) {
-		checkExistingUsername(username); // 이미 유저네임이 있는지 검증
-		return User.createUser(username, encodedPassword);
+	private void validateConfirmPassword(AuthSignUpRequestDto requestDto) {
+		if (!requestDto.getPassword().equals(requestDto.getConfirmPassword())) {
+			throw new ServiceException(PASSWORD_MISMATCH);
+		}
 	}
 
-	private void checkExistingUsername(String username) {
-		if (userRepository.existsByUsername(username)) {
-			throw new DuplicateUsernameException();
-		}
+	private User createUser(String username, String encodedPassword) {
+		userRepository.checkExistingUsername(username); // 이미 유저네임이 있는지 검증
+		return User.createUser(username, encodedPassword);
 	}
 
 	/**
@@ -60,10 +66,9 @@ public class AuthService {
 	 * @param requestDto username, password 를 가지는 DTO
 	 * @return JWT 반환
 	 */
-	public String login(AuthRequestDto requestDto) {
+	public String login(AuthLoginRequestDto requestDto) {
 
-		User user = userRepository.findByUsername(requestDto.getUsername())
-			.orElseThrow(UserNotFoundException::new);
+		User user = userRepository.getUserByUsername(requestDto.getUsername());
 
 		Authentication authentication = getAuthentication(requestDto.getPassword(), user);
 		setAuthentication(authentication);
@@ -80,12 +85,23 @@ public class AuthService {
 
 	private void validatePassword(String rawPassword, String encodedPassword) {
 		if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-			throw new UserNotFoundException();
+			throw new ServiceException(USER_NOT_FOUND);
 		}
 	}
 
 	private void setAuthentication(Authentication authentication) {
 		SecurityContext context = SecurityContextHolder.getContext();
 		context.setAuthentication(authentication);
+	}
+
+	/**
+	 * 입력받은 username이 존재하는지를 체크
+	 */
+	public AuthCheckUsernameResponseDto checkExistingUsername(
+		AuthCheckUsernameRequestDto requestDto) {
+
+		boolean hasExistingUsername = userRepository.existsByUsername(requestDto.getUsername());
+
+		return new AuthCheckUsernameResponseDto(hasExistingUsername);
 	}
 }

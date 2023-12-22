@@ -2,9 +2,11 @@ package sparta.todoapp.domain.todocard.controller;
 
 import java.util.List;
 import java.util.Map;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,9 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardCreateRequestDto;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardEditRequestDto;
 import sparta.todoapp.domain.todocard.dto.response.TodoCardDetailResponseDto;
@@ -91,6 +90,39 @@ public class TodoController {
 		@AuthenticationPrincipal CustomUserDetails userDetails) {
 
 		todoCardService.finishTodoCard(todoCardId, userDetails.getUsername());
+
+		return ResponseEntity.ok().build();
+	}
+
+	/**
+	 * 할일카드 삭제
+	 */
+	@DeleteMapping("/{todoCardId}")
+	public ResponseEntity<?> deleteTodoCard(
+		@PathVariable Long todoCardId,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		todoCardService.delete(todoCardId, userDetails.getUsername());
+
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/{todoCardId}/like")
+	public ResponseEntity<?> likeTodoCard(
+		@PathVariable Long todoCardId,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		todoCardService.like(todoCardId, userDetails.getUser());
+
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{todoCardId}/like")
+	public ResponseEntity<?> unlikeTodoCard(
+		@PathVariable Long todoCardId,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		todoCardService.unlike(todoCardId, userDetails.getUser());
 
 		return ResponseEntity.ok().build();
 	}

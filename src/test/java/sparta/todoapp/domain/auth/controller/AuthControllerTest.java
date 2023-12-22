@@ -1,20 +1,24 @@
 package sparta.todoapp.domain.auth.controller;
 
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.doThrow;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static sparta.todoapp.global.error.ErrorCode.DUPLICATE_USERNAME;
+import static sparta.todoapp.global.error.ErrorCode.USER_NOT_FOUND;
 
 import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import sparta.todoapp.domain.auth.dto.AuthRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthLoginRequestDto;
+import sparta.todoapp.domain.auth.dto.request.AuthSignUpRequestDto;
 import sparta.todoapp.global.config.security.jwt.JwtUtil;
-import sparta.todoapp.global.error.exception.DuplicateUsernameException;
-import sparta.todoapp.global.error.exception.UserNotFoundException;
+import sparta.todoapp.global.error.exception.ServiceException;
 import sparta.todoapp.test.ControllerTest;
 
 @DisplayName("인증 컨트롤러 테스트")
@@ -24,7 +28,7 @@ class AuthControllerTest extends ControllerTest {
 	@Test
 	void signup() throws Exception {
 		// given
-		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
+		AuthSignUpRequestDto authRequestDto = new AuthSignUpRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD, TEST_USER_PASSWORD);
 
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
 
@@ -40,10 +44,10 @@ class AuthControllerTest extends ControllerTest {
 	@Test
 	void signup_fail_duplicate_username() throws Exception {
 		// given
-		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
 
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
-		doThrow(new DuplicateUsernameException()).when(authService).signup(any(AuthRequestDto.class));
+		doThrow(new ServiceException(DUPLICATE_USERNAME)).when(authService).signup(any(AuthSignUpRequestDto.class));
 
 		// when
 		ResultActions resultActions = mvc.perform(post("/api/auth/signup")
@@ -61,10 +65,10 @@ class AuthControllerTest extends ControllerTest {
 	@Test
 	void login() throws Exception {
 		// given
-		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
 
-		given(authService.login(any(AuthRequestDto.class))).willReturn("token");
+		given(authService.login(any(AuthLoginRequestDto.class))).willReturn("token");
 
 		// when
 		ResultActions resultActions = mvc.perform(post("/api/auth/login")
@@ -82,10 +86,10 @@ class AuthControllerTest extends ControllerTest {
 	@Test
 	void login_fail_user_not_found() throws Exception {
 		// given
-		AuthRequestDto authRequestDto = new AuthRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
+		AuthLoginRequestDto authRequestDto = new AuthLoginRequestDto(TEST_USER_NAME, TEST_USER_PASSWORD);
 		String jsonString = objectMapper.writeValueAsString(authRequestDto);
 
-		given(authService.login(any(AuthRequestDto.class))).willThrow(new UserNotFoundException());
+		given(authService.login(any(AuthLoginRequestDto.class))).willThrow(new ServiceException(USER_NOT_FOUND));
 
 		// when
 		ResultActions resultActions = mvc.perform(post("/api/auth/login")
