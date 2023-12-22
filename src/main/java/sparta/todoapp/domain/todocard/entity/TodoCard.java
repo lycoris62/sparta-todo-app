@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import sparta.todoapp.domain.auth.entity.User;
+import sparta.todoapp.domain.comment.dto.response.CommentResponseDto;
 import sparta.todoapp.domain.comment.entity.Comment;
 import sparta.todoapp.domain.model.BaseEntity;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardEditRequestDto;
@@ -49,11 +52,18 @@ public class TodoCard extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User author;
 
+	@BatchSize(size = 100)
 	@OneToMany(mappedBy = "todoCard", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Comment> commentList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "todoCard", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Like> likeList = new ArrayList<>();
+
+	@Transient
+	private Long likeCount;
+
+	@Transient
+	private List<CommentResponseDto> commentResponseList = new ArrayList<>();
 
 	@Builder
 	public TodoCard(String title, String content, User author, LocalDateTime createdAt) {
@@ -80,5 +90,25 @@ public class TodoCard extends BaseEntity {
 	 */
 	public void finish() {
 		this.isDone = true;
+	}
+
+	/**
+	 * 좋아요 추가
+	 */
+	public void like(User user) {
+		Like like = Like.builder()
+			.user(user)
+			.todoCard(this)
+			.build();
+
+		likeList.add(like);
+	}
+
+	public void setLikeCount(long likeCount) {
+		this.likeCount = likeCount;
+	}
+
+	public void setCommentResponseList(List<CommentResponseDto> commentResponseList) {
+		this.commentResponseList = commentResponseList;
 	}
 }
