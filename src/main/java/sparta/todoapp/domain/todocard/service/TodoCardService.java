@@ -10,11 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sparta.todoapp.domain.auth.entity.User;
+import sparta.todoapp.domain.comment.dto.response.CommentResponseDto;
+import sparta.todoapp.domain.comment.repository.CommentRepository;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardCreateRequestDto;
 import sparta.todoapp.domain.todocard.dto.request.TodoCardEditRequestDto;
 import sparta.todoapp.domain.todocard.dto.response.TodoCardDetailResponseDto;
 import sparta.todoapp.domain.todocard.dto.response.TodoCardSimpleResponseDto;
+import sparta.todoapp.domain.todocard.entity.Like;
 import sparta.todoapp.domain.todocard.entity.TodoCard;
+import sparta.todoapp.domain.todocard.repository.LikeRepository;
 import sparta.todoapp.domain.todocard.repository.TodoCardRepository;
 import sparta.todoapp.global.error.exception.ServiceException;
 
@@ -28,6 +32,8 @@ import sparta.todoapp.global.error.exception.ServiceException;
 public class TodoCardService {
 
 	private final TodoCardRepository todoCardRepository;
+	private final LikeRepository likeRepository;
+	private final CommentRepository commentRepository;
 
 	/**
 	 * 모든 할일카드 리스트를 사용자에 따라 분류하여 반환
@@ -46,6 +52,14 @@ public class TodoCardService {
 	public TodoCardDetailResponseDto getTodoCard(Long todoCardId) {
 
 		TodoCard todoCard = todoCardRepository.getTodoCardById(todoCardId);
+		Long likeCount = likeRepository.countLikeByTodoCard_Id(todoCardId);
+		List<CommentResponseDto> commentList = commentRepository.findAllByTodoCard_Id(todoCardId)
+			.stream()
+			.map(CommentResponseDto::new)
+			.toList();
+
+		todoCard.setLikeCount(likeCount);
+		todoCard.setCommentResponseList(commentList);
 
 		return new TodoCardDetailResponseDto(todoCard);
 	}
@@ -112,5 +126,28 @@ public class TodoCardService {
 
 		TodoCard todoCard = getValidTodoCard(todoCardId, username); // 사용자가 작성한 할일카드만 가져옴
 		todoCardRepository.delete(todoCard);
+	}
+
+	/**
+	 * 좋아요 추가
+	 */
+	@Transactional
+	public void like(Long todoCardId, User user) {
+
+		TodoCard todoCard = todoCardRepository.getTodoCardById(todoCardId);
+
+		todoCard.like(user);
+	}
+
+	/**
+	 * 좋아요 삭제
+	 */
+	@Transactional
+	public void unlike(Long todoCardId, User user) {
+
+		Like like = likeRepository.findByUser_IdAndTodoCard_Id(user.getId(), todoCardId)
+			.orElseThrow(IllegalArgumentException::new);
+
+		likeRepository.delete(like);
 	}
 }
