@@ -106,4 +106,24 @@ public class TodoController {
 
 		return ResponseEntity.ok().build();
 	}
+
+	@PostMapping("/{todoCardId}/like")
+	public ResponseEntity<?> likeTodoCard(
+		@PathVariable Long todoCardId,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		todoCardService.like(todoCardId, userDetails.getUser());
+
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{todoCardId}/like")
+	public ResponseEntity<?> unlikeTodoCard(
+		@PathVariable Long todoCardId,
+		@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+		todoCardService.unlike(todoCardId, userDetails.getUser());
+
+		return ResponseEntity.ok().build();
+	}
 }
